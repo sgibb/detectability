@@ -17,9 +17,8 @@ You are welcome to:
 
 [GitHub](https://github.com) is not directly supported by the basic
 `install.packages` command. You could use the
-[devtools](http://cran.r-project.org/web/packages/devtools/index.html) package
-to install the development version of detectability
-(you will need a complete development environment to compile the some c code).
+[devtools](https://cran.r-project.org/package=devtools) package
+to install the development version of `detectability`.
 
 ```r
 install.packages("devtools")

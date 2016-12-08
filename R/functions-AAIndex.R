@@ -37,10 +37,12 @@ parseAAindex1 <- function(file, verbose=interactive()) {
            from=pos[i,], to=pos[i + 1L,] - 1L)
   })
   names(metadata) <- names(key)[seq_along(metadata)]
+  metadata <- as.data.frame(metadata, row.names=metadata$AccessionNumber)
 
   # fetch index
   index <- matrix(scan(text=lines[pos[c("Index", "End"),]], quiet=TRUE),
                   nrow=ncol(pos), ncol=20L, byrow=TRUE,
-                  dimnames=list(accession, .aaNames1))
+                  dimnames=list(metadata$AccessionNumber, .aaNames1))
 
+  .AAIndex(exprs=index, featureData=AnnotatedDataFrame(metadata))
 }

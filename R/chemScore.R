@@ -127,21 +127,23 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
   metOxF
 }
 
-#' @param x \code{character}, amino acid sequence(s)
-#' @param bmcf \code{double}, Basal Missed Cleavage Factor, typical 100
+#' @param x \code{character}, amino acid sequence(s).
+#' @param bmcf \code{double}, Basal Missed Cleavage Factor, typical 100.
+#' @param rules \code{data.frame}, two-columns (pattern, score).
+#' @param verbose \code{logical}, verbose output?
 #' @importFrom cleaver cleavageSites
 #' @noRd
 .chemScorePartialFactor <- function(x, bmcf=100,
-                                    rules=data.frame(pattern=c("[KR]P",       # 16
-                                                               "^[KR].",      # 17
-                                                               "[DE][KR].",   # 18
-                                                               "[KR][DE]",    # 19
-                                                               "[KR][ILV]",   # 20
-                                                               "[KR].$",      # 21
-                                                               "[DE].[KR].",  # 22
-                                                               "[KR].[DE]",   # 23
-                                                               ".[KR].",      # 24
-                                                               "[KR]..$"),    # 25
+                                    rules=data.frame(pattern=c("[KR]P",              # 16
+                                                               "^[KR].",             # 17
+                                                               "[DE][KR].",          # 18
+                                                               "[KR][DE]",           # 19
+                                                               "[KR][ILV]",          # 20
+                                                               "[KR][KR]|[KR].$",    # 21
+                                                               "[DE].[KR].",         # 22
+                                                               "[KR].[DE]",          # 23
+                                                               ".[KR].",             # 24
+                                                               "[KR].[KR]|[KR]..$"), # 25
                                                      score=c(100,   # 16
                                                              30,    # 17
                                                              20,    # 18
@@ -152,13 +154,31 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
                                                              2,     # 23
                                                              2,     # 24
                                                              1.5),  # 25
-                                                     stringsAsFactors=FALSE)) {
+                                                     stringsAsFactors=FALSE),
+                                    verbose=interactive()) {
   r <- lapply(rules$pattern, function(p)lengths(cleavageSites(x, custom=p)))
   r <- do.call(rbind, r) # rows == pattern, columns == x
-  r <- r * rules$score
-  r[r == 0L] <- 1L # avoid multiplication by zero
-  r <- apply(r, 2L, prod)
-  r <- (bmcf + r)/r
-  r[r == 101L] <- 1L # no cleavage rule matched
-  r
+  mcf <- r * rules$score
+
+  if (verbose) {
+    strMcf <- character(ncol(r))
+    for (i in 1:ncol(r)) {
+      strMcf[i] <- paste0("rule ", 16L:(15L + nrow(rules)),
+                          " (", rules$pattern, "), ", x[i],
+                          ", match=", r[, i], ", score=", mcf[, i],
+                          collapse="\n")
+
+    }
+    .msg(verbose, paste0(strMcf, collapse="\n"))
+  }
+
+  mcf[mcf == 0L] <- 1L # avoid multiplication by zero
+  mcf <- apply(mcf, 2L, prod)
+  chpf <- (bmcf + mcf)/mcf
+  chpf[chpf == 101L] <- 1L # no cleavage rule matched
+
+  .msg(verbose, paste0("rule 16-", 15 + nrow(rules), ": ", x, ", ChPF=", chpf,
+                       collapse="\n"))
+
+  chpf
 }

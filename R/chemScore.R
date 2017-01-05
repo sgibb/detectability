@@ -39,7 +39,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
                              verbose=verbose)
   score <- score * .methionine(x, metOxF=metOxF, nMetOx=nMetOx,
                                verbose=verbose)
-  score / .chemScorePartialFactor(x)
+  score / .chemScorePartialFactor(x, verbose=verbose)
 }
 
 #' rule 1-5

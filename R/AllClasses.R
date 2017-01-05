@@ -1,3 +1,5 @@
+#' @import methods
+#' @noRd
 .AAIndex <- setClass("AAIndex",
                      contains="eSet",
                      prototype=prototype(new("VersionedBiobase",

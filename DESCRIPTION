@@ -6,6 +6,7 @@ Authors@R: person("Sebastian", "Gibb", role=c("aut", "cre"),
                   email="mail@sebastiangibb.de")
 Depends:
     R (>= 3.3.0),
+    methods,
     Biobase (>= 2.34)
 Imports:
     cleaver (>= 1.12),

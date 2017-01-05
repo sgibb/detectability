@@ -1,3 +1,7 @@
+#' ChemScore
+#'
+#' This function calculates the ChemScore proposed in Parker 2001.
+#'
 #' @param x \code{character}, amino acid sequence(s).
 #' @param arg \code{double}, base ChemScore for Arginine (default: 100).
 #' @param cys \code{double}, base ChemScore for Cysteine (default: 0).
@@ -5,8 +9,26 @@
 #' @param detrimentalCys \code{double}, score for detrimental cysteine.
 #' @param metOxF \code{double}, methionine oxidation factor (default: 0.2).
 #' @param nMetOx \code{integer}, number of oxidized methionine (default: 1).
-#' @param \ldots further arguments passed to internal functions.
+#' @param verbose \code{logical}, verbose output?
+#' @references
+#' Parker KC. Scoring methods in MALDI peptide mass fingerprinting: ChemScore,
+#' and the ChemApplex program. \cr
+#' Journal of the American Society for Mass Spectrometry. 2002 Jan 31;13(1):22-39.
 #' @export
+#' @examples
+#' library("detectability")
+#'
+#' # Example sequences taken from Table 4 in Parker 2001.
+#' sequences <- c("HGLDNYR",
+#'                "RHGLDNYR",
+#'                "WWCNDGR",
+#'                "GTDVQAWIR",
+#'                "GYSLGNWVCAAK",
+#'                "FESNFNTQATNR",
+#'                "IVSDGNGMNAWVAWR",
+#'                "NTDGSTDYGILQINSR",
+#'                "KIVSDGNGMNAWVAWR")
+#' chemScore(sequences)
 chemScore <- function(x, arg=100, cys=0, lys=10,
                       detrimentalCys=10,
                       metOxF=0.2, nMetOx=1L,
@@ -25,6 +47,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
 #' @param arg \code{double}, base ChemScore for Arginine (default: 100).
 #' @param cys \code{double}, base ChemScore for Cysteine (default: 0).
 #' @param lys \code{double}, base ChemScore for Lysine (default: 10).
+#' @param verbose \code{logical}, verbose output?
 #' @noRd
 .baseChemScore <- function(x, arg=100, cys=0, lys=10, verbose=interactive()) {
   n <- length(x)

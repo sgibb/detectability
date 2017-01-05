@@ -2,6 +2,7 @@
 % Please edit documentation in R/chemScore.R
 \name{chemScore}
 \alias{chemScore}
+\title{ChemScore}
 \usage{
 chemScore(x, arg = 100, cys = 0, lys = 10, detrimentalCys = 10,
   metOxF = 0.2, nMetOx = 1L, verbose = interactive())
@@ -21,6 +22,29 @@ chemScore(x, arg = 100, cys = 0, lys = 10, detrimentalCys = 10,
 
 \item{nMetOx}{\code{integer}, number of oxidized methionine (default: 1).}
 
-\item{\ldots}{further arguments passed to internal functions.}
+\item{verbose}{\code{logical}, verbose output?}
+}
+\description{
+This function calculates the ChemScore proposed in Parker 2001.
+}
+\examples{
+library("detectability")
+
+# Example sequences taken from Table 4 in Parker 2001.
+sequences <- c("HGLDNYR",
+               "RHGLDNYR",
+               "WWCNDGR",
+               "GTDVQAWIR",
+               "GYSLGNWVCAAK",
+               "FESNFNTQATNR",
+               "IVSDGNGMNAWVAWR",
+               "NTDGSTDYGILQINSR",
+               "KIVSDGNGMNAWVAWR")
+chemScore(sequences)
+}
+\references{
+Parker KC. Scoring methods in MALDI peptide mass fingerprinting: ChemScore,
+and the ChemApplex program. \cr
+Journal of the American Society for Mass Spectrometry. 2002 Jan 31;13(1):22-39.
 }
 

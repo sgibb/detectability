@@ -1,3 +1,5 @@
+#' @importFrom utils download.file
+#' @noRd
 fetchAAindex <- function(url="ftp://ftp.genome.jp/pub/db/community/aaindex/aaindex1",
                          verbose=interactive()) {
   tmp <- tempfile()
@@ -8,6 +10,8 @@ fetchAAindex <- function(url="ftp://ftp.genome.jp/pub/db/community/aaindex/aaind
   tmp
 }
 
+#' @importFrom Biobase AnnotatedDataFrame
+#' @noRd
 parseAAindex1 <- function(file, verbose=interactive()) {
   lines <- readLines(file)
 

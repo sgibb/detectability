@@ -11,7 +11,7 @@ sequences <- c("HGLDNYR",
                "KIVSDGNGMNAWVAWR",
                "DKLDAAAK")
 
-test_that("chemScore generates same scores as in Parker 2001", {
+test_that("chemScore generates same scores as in Parker 2002", {
   scores <- setNames(c(100,
                        23.3,
                        5,
@@ -92,6 +92,15 @@ test_that(".methionine", {
   expect_equal(detectability:::.methionine(rep("ACE", 3),
                                            metOxF=c(0.2, 1, 5)), rep(1, 3))
 
+})
+
+test_that(".proline", {
+  s <- c("PACE", "AKE")
+  expect_message(detectability:::.proline(s, verbose=TRUE),
+                 paste0("rule 14: ", s, ", score=", c(100, 1), collapse="\n"))
+  expect_silent(detectability:::.proline(s, verbose=FALSE))
+
+  expect_equal(detectability:::.proline(s), c(100, 1))
 })
 
 test_that(".chemScorePartialFactor", {

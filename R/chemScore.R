@@ -39,6 +39,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
                              verbose=verbose)
   score <- score * .methionine(x, metOxF=metOxF, nMetOx=nMetOx,
                                verbose=verbose)
+  score <- score / .proline(x, verbose)
   score / .chemScorePartialFactor(x, verbose=verbose)
 }
 
@@ -151,6 +152,18 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
   metOxF
 }
 
+#' rule 14
+#' @param x \code{character}, amino acid sequence(s).
+#' @param verbose \code{logical}, verbose output?
+#' @noRd
+.proline <- function(x, verbose=interactive()) {
+  p <- rep.int(1, length(x))
+  p[substr(x, 1, 1) == "P"] <- 100
+  .msg(verbose, paste0("rule 14: ", x, ", score=", p, collapse="\n"))
+  p
+}
+
+#' rule 16-25
 #' @param x \code{character}, amino acid sequence(s).
 #' @param bmcf \code{double}, Basal Missed Cleavage Factor, typical 100.
 #' @param rules \code{data.frame}, two-columns (pattern, score).

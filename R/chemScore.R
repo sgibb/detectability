@@ -37,7 +37,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
                           verbose=verbose)
   score <- score / .cysteine(x, detrimentalCys=detrimentalCys,
                              verbose=verbose)
-  score <- score * .methionine(x, metOxF=metOxF, nMetOx=nMetOx,
+  score <- score / .methionine(x, metOxF=metOxF, nMetOx=nMetOx,
                                verbose=verbose)
   score <- score / .proline(x, verbose)
   score / .chemScorePartialFactor(x, verbose=verbose)
@@ -141,12 +141,12 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
   metOxF <- rep_len(metOxF, length(x))
   gt1 <- which(metOxF > 1L)
   lt1 <- which(metOxF < 1L)
-  metOxF[metOxF == 1L] <- 1 / 2
-  metOxF[gt1] <- 1 / metOxF[gt1]^(nR[gt1])
-  metOxF[lt1] <- metOxF[lt1]^(nX[lt1])
+  metOxF[metOxF == 1L] <- 2
+  metOxF[gt1] <- metOxF[gt1]^(nR[gt1])
+  metOxF[lt1] <- 1 / metOxF[lt1]^(nX[lt1])
   metOxF[nM == 0L] <- 1L
 
-  .msg(verbose, paste0(sprintf("rule 8-13: %s, nM=%i, nR=%i, nX=%i, metOxF=%0.3f",
+  .msg(verbose, paste0(sprintf("rule 8-13: %s, nM=%i, nR=%i, nX=%i, metOxF=%0.1f",
                                x, nM, nR, nX, metOxF), collapse="\n"))
 
   metOxF

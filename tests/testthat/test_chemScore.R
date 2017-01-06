@@ -81,17 +81,16 @@ test_that(".methionine", {
 
   expect_message(detectability:::.methionine(s, verbose=TRUE),
                  paste0("rule 8-13: ", s,
-                        ", nM=", 1:3, ", nR=", 0:2, ", nX=", 1, ", metOxF=0.200",
+                        ", nM=", 1:3, ", nR=", 0:2, ", nX=", 1, ", metOxF=5.0",
                         collapse="\n"))
   expect_silent(detectability:::.methionine(s, verbose=FALSE))
 
-  expect_equal(detectability:::.methionine(s), rep(0.2, 3))
-  expect_equal(detectability:::.methionine(s, nMetOx=1:3), 0.2^(1:3))
-  expect_equal(detectability:::.methionine(s, metOxF=m), c(1/2, 1/2, 1/4))
+  expect_equal(detectability:::.methionine(s), rep(5, 3))
+  expect_equal(detectability:::.methionine(s, nMetOx=1:3), 5^(1:3))
+  expect_equal(detectability:::.methionine(s, metOxF=m), c(2, 2, 4))
 
   expect_equal(detectability:::.methionine(rep("ACE", 3),
                                            metOxF=c(0.2, 1, 5)), rep(1, 3))
-
 })
 
 test_that(".proline", {

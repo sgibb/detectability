@@ -143,6 +143,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
   metOxF[metOxF == 1L] <- 1 / 2
   metOxF[gt1] <- 1 / metOxF[gt1]^(nR[gt1])
   metOxF[lt1] <- metOxF[lt1]^(nX[lt1])
+  metOxF[nM == 0L] <- 1L
 
   .msg(verbose, paste0(sprintf("rule 8-13: %s, nM=%i, nR=%i, nX=%i, metOxF=%0.3f",
                                x, nM, nR, nX, metOxF), collapse="\n"))

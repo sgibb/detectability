@@ -69,6 +69,7 @@ test_that(".cysteine", {
 test_that(".methionine", {
   s <- c("RMR", "RMM", "RMMM")
   m <- c(1, 0.5, 2)
+
   expect_error(detectability:::.methionine(s, metOxF=0.1),
                ".*metOxF.* has to be a .*double.* between 0.2 and 5.0")
   expect_error(detectability:::.methionine(s, metOxF=5.1),
@@ -87,6 +88,10 @@ test_that(".methionine", {
   expect_equal(detectability:::.methionine(s), rep(0.2, 3))
   expect_equal(detectability:::.methionine(s, nMetOx=1:3), 0.2^(1:3))
   expect_equal(detectability:::.methionine(s, metOxF=m), c(1/2, 1/2, 1/4))
+
+  expect_equal(detectability:::.methionine(rep("ACE", 3),
+                                           metOxF=c(0.2, 1, 5)), rep(1, 3))
+
 })
 
 test_that(".chemScorePartialFactor", {

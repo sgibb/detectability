@@ -1,5 +1,5 @@
 Package: detectability
-Version: 0.1
+Version: 0.0.3
 Date: 2016-12-07
 Title: Detectability of Peptides in Mass Spectrometry Experiments
 Authors@R: person("Sebastian", "Gibb", role=c("aut", "cre"),

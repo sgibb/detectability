@@ -1,5 +1,9 @@
 # RELEASE HISTORY OF THE "detectability" PACKAGE
 
+## Changes in 0.0.4 [2017-01-10]
+
+- Fix ChPF calculation for multiple missed cleavages.
+
 ## Changes in 0.0.3 [2017-01-06]
 
 - Fix `metOxF == 1` for peptides without methionine.

@@ -40,7 +40,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
   score <- score / .methionine(x, metOxF=metOxF, nMetOx=nMetOx,
                                verbose=verbose)
   score <- score / .proline(x, verbose)
-  score / .chemScorePartialFactor(x, verbose=verbose)
+  setNames(score / .chemScorePartialFactor(x, verbose=verbose), x)
 }
 
 #' rule 1-5
@@ -166,56 +166,60 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
 #' rule 16-25
 #' @param x \code{character}, amino acid sequence(s).
 #' @param bmcf \code{double}, Basal Missed Cleavage Factor, typical 100.
-#' @param rules \code{data.frame}, two-columns (pattern, score).
+#' @param cleavageRule \code{character}, regular trypsin cleavage.
+#' @param missedCleavageRules \code{data.frame}, two-columns (pattern, score).
 #' @param verbose \code{logical}, verbose output?
 #' @importFrom cleaver cleavageSites
 #' @noRd
-.chemScorePartialFactor <- function(x, bmcf=100,
-                                    rules=data.frame(pattern=c("[KR]P",              # 16
-                                                               "^[KR].",             # 17
-                                                               "[DE][KR].",          # 18
-                                                               "[KR][DE]",           # 19
-                                                               "[KR][ILV]",          # 20
-                                                               "[KR][KR]|[KR].$",    # 21
-                                                               "[DE].[KR].",         # 22
-                                                               "[KR].[DE]",          # 23
-                                                               ".[KR].",             # 24
-                                                               "[KR].[KR]|[KR]..$"), # 25
-                                                     score=c(100,   # 16
-                                                             30,    # 17
-                                                             20,    # 18
-                                                             20,    # 19
-                                                             5,     # 20
-                                                             3,     # 21
-                                                             2,     # 22
-                                                             2,     # 23
-                                                             2,     # 24
-                                                             1.5),  # 25
-                                                     stringsAsFactors=FALSE),
+.chemScorePartialFactor <- function(x, bmcf=100, cleavageRule="[KR].",
+                                    missedCleavageRules=data.frame(
+                                      pattern=c("[KR]P",              # 16
+                                                "^[KR].",             # 17
+                                                "(?<=[DE])[KR].",     # 18
+                                                "[KR][DE]",           # 19
+                                                "[KR][ILV]",          # 20
+                                                "[KR][KR]|[KR].$",    # 21
+                                                "(?<=[DE].)[KR].",    # 22
+                                                "[KR].[DE]",          # 23
+                                                "(?<=^.)[KR].",       # 24
+                                                "[KR].[KR]|[KR]..$"), # 25
+                                      score=c(100,   # 16
+                                              30,    # 17
+                                              20,    # 18
+                                              20,    # 19
+                                              5,     # 20
+                                              3,     # 21
+                                              2,     # 22
+                                              2,     # 23
+                                              2,     # 24
+                                              1.5),  # 25
+                                      stringsAsFactors=FALSE),
                                     verbose=interactive()) {
-  r <- lapply(rules$pattern, function(p)lengths(cleavageSites(x, custom=p)))
-  r <- do.call(rbind, r) # rows == pattern, columns == x
-  mcf <- r * rules$score
+  sites <- cleavageSites(x, custom=cleavageRule)
 
-  if (verbose) {
-    strMcf <- character(ncol(r))
-    for (i in 1:ncol(r)) {
-      strMcf[i] <- paste0("rule ", 16L:(15L + nrow(rules)),
-                          " (", rules$pattern, "), ", x[i],
-                          ", match=", r[, i], ", score=", mcf[, i],
-                          collapse="\n")
+  isMissingCleavage <- which(lengths(sites) != 0L)
 
+  chpf <- rep.int(1, length(x))
+
+  r <- lapply(missedCleavageRules$pattern,
+              function(p)cleavageSites(x[isMissingCleavage], custom=p))
+
+  for (i in seq(along=isMissingCleavage)) {
+    curSites <- sites[isMissingCleavage[i]]
+    mcf <- rep.int(1, length(curSites))
+
+    for (j in seq(along=r)) {
+      m <- match(curSites, r[[j]][i])
+      if (verbose && !is.na(m)) {
+        .msg(verbose, paste0("rule ", j + 15, ": ", x[isMissingCleavage[i]],
+                             ", pattern=", sQuote(missedCleavageRules$pattern[j]),
+                             ", score=", missedCleavageRules$score[j]))
+      }
+      mcf[m] <- mcf[m] * missedCleavageRules$score[j]
     }
-    .msg(verbose, paste0(strMcf, collapse="\n"))
+    chpf[isMissingCleavage[i]] <- prod(chpf[isMissingCleavage[i]], mcf/(bmcf + mcf))
   }
-
-  mcf[mcf == 0L] <- 1L # avoid multiplication by zero
-  mcf <- apply(mcf, 2L, prod)
-  chpf <- (bmcf + mcf)/mcf
-  chpf[chpf == 101L] <- 1L # no cleavage rule matched
-
-  .msg(verbose, paste0("rule 16-", 15 + nrow(rules), ": ", x, ", ChPF=", chpf,
-                       collapse="\n"))
-
+  chpf = 1 / chpf
+  .msg(verbose, paste0("ChPF: ", x, ", score=", chpf))
   chpf
 }

@@ -23,7 +23,7 @@ test_that("chemScore generates same scores as in Parker 2002", {
                        30.1,
                        8), sequences)
 
-  expect_equal(chemScore(sequences[-c(3, 5)]), scores[-c(3, 5)])
+  expect_equal(chemScore(sequences[-c(3, 5)], metOxF=1.0), scores[-c(3, 5)])
   expect_equal(chemScore(sequences[c(3, 5)], cys=100, detrimentalCys=10), scores[c(3, 5)])
 })
 
@@ -103,16 +103,16 @@ test_that(".proline", {
 })
 
 test_that(".chemScorePartialFactor", {
-  scores <- setNames(c(1,
-                       (100 + 30)/30,
-                       1,
-                       1,
-                       1,
-                       1,
-                       1,
-                       1,
-                       (100 + 30 * 5)/(30 * 5),
-                       (100 + 20 * 5 * 2 * 2)/(20 * 5 * 2 * 2)), sequences)
+  scores <- c(1,
+              (100 + 30)/30,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              (100 + 30 * 5)/(30 * 5),
+              (100 + 20 * 5 * 2 * 2)/(20 * 5 * 2 * 2))
 
   expect_equal(detectability:::.chemScorePartialFactor(sequences), scores)
 })

@@ -114,5 +114,11 @@ test_that(".chemScorePartialFactor", {
               (100 + 30 * 5)/(30 * 5),
               (100 + 20 * 5 * 2 * 2)/(20 * 5 * 2 * 2))
 
+  expect_message(detectability:::.chemScorePartialFactor(sequences, verbose=TRUE),
+                 paste0(sprintf("ChPF: %s, score=%0.2f", sequences, scores),
+                        collapse="\n"))
+
+  expect_silent(detectability:::.chemScorePartialFactor(sequences, verbose=FALSE))
+
   expect_equal(detectability:::.chemScorePartialFactor(sequences), scores)
 })

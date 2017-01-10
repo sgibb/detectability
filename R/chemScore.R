@@ -220,6 +220,7 @@ chemScore <- function(x, arg=100, cys=0, lys=10,
     chpf[isMissingCleavage[i]] <- prod(chpf[isMissingCleavage[i]], mcf/(bmcf + mcf))
   }
   chpf = 1 / chpf
-  .msg(verbose, paste0("ChPF: ", x, ", score=", chpf))
+  .msg(verbose, paste0(sprintf("ChPF: %s, score=%0.2f", x, chpf),
+                       collapse="\n"))
   chpf
 }
